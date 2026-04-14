@@ -120,20 +120,20 @@ li span {
 
 .delete-btn {
   background: none;
-  border: none;
-  color: #c0c4d0;
-  font-size: 14px;
+  border: 1px solid #e8eaf0;
+  color: #e24b4a;
+  font-size: 13px;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 4px 10px;
   border-radius: 6px;
-  transition: color 0.2s, background 0.2s;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
   margin-left: 12px;
   flex-shrink: 0;
 }
 
 .delete-btn:hover {
-  color: #e24b4a;
   background: #fcebeb;
+  border-color: #e24b4a;
 }
 
 #empty-msg {
