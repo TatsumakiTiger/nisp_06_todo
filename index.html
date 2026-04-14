@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
- <meta charset="UTF-8">
- <title>TODO App</title>
+  <meta charset="UTF-8">
+  <title>TODO App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
- <h1>Moja lista zadań</h1>
- <ul id="task-list"></ul>
+  <h1>Moja lista zadań</h1>
+
+  <div class="form">
+    <input type="text" id="task-input" placeholder="Wpisz nowe zadanie...">
+    <button id="add-btn">Dodaj</button>
+  </div>
+
+  <ul id="task-list"></ul>
+
+  <script src="app.js"></script>
 </body>
 </html>
