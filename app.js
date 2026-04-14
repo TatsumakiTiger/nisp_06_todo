@@ -1,4 +1,3 @@
-// --- MODEL ---
 class Task {
   constructor({ id = Date.now(), text, done = false, timestamp = '' }) {
     this.id = id;
@@ -16,6 +15,7 @@ class Task {
         hour: '2-digit',
         minute: '2-digit'
       });
+
       this.timestamp = `ukończono o ${time}`;
     } else {
       this.timestamp = '';
@@ -23,11 +23,10 @@ class Task {
   }
 }
 
-// --- STORAGE ---
 class StorageService {
   static load() {
     const data = JSON.parse(localStorage.getItem('tasks')) || [];
-    return data.map(task => new Task(task));
+    return data.map(t => new Task(t));
   }
 
   static save(tasks) {
@@ -35,64 +34,6 @@ class StorageService {
   }
 }
 
-// --- RENDER ---
-class TaskRenderer {
-  constructor(listEl, onToggle, onDelete) {
-    this.listEl = listEl;
-    this.onToggle = onToggle;
-    this.onDelete = onDelete;
-  }
-
-  render(task) {
-    const li = document.createElement('li');
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = task.done;
-
-    const span = document.createElement('span');
-    span.textContent = task.text;
-
-    const timestamp = document.createElement('span');
-    timestamp.className = 'timestamp';
-    timestamp.textContent = task.timestamp;
-
-    const del = document.createElement('button');
-    del.textContent = 'Usuń';
-    del.className = 'delete-btn';
-
-    if (task.done) li.classList.add('done');
-
-    checkbox.addEventListener('change', () =>
-      this.onToggle(task, li, checkbox, timestamp)
-    );
-
-    del.addEventListener('click', () =>
-      this.onDelete(task, li)
-    );
-
-    const left = document.createElement('div');
-    left.className = 'li-left';
-    left.appendChild(checkbox);
-
-    const middle = document.createElement('div');
-    middle.className = 'li-middle';
-    middle.appendChild(span);
-    middle.appendChild(timestamp);
-
-    li.appendChild(left);
-    li.appendChild(middle);
-    li.appendChild(del);
-
-    this.listEl.appendChild(li);
-  }
-
-  clear() {
-    this.listEl.innerHTML = '';
-  }
-}
-
-// --- APP ---
 class TaskApp {
   constructor() {
     this.input = document.getElementById('task-input');
@@ -104,91 +45,112 @@ class TaskApp {
 
     this.tasks = StorageService.load();
 
-    this.renderer = new TaskRenderer(
-      this.list,
-      this.toggleTask.bind(this),
-      this.deleteTask.bind(this)
-    );
-
     this.init();
   }
 
   init() {
     this.initTheme();
     this.bindEvents();
-    this.renderAll();
-    this.updateEmptyMsg();
+    this.render();
+    this.updateEmpty();
   }
 
   initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    this.html.setAttribute('data-theme', savedTheme);
+    const saved = localStorage.getItem('theme') || 'light';
+    this.html.setAttribute('data-theme', saved);
 
     this.themeToggle.addEventListener('click', () => {
-      const current = this.html.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
+      const next =
+        this.html.getAttribute('data-theme') === 'light'
+          ? 'dark'
+          : 'light';
 
       this.html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
-
-      this.themeToggle.classList.add('spin');
-      setTimeout(() => this.themeToggle.classList.remove('spin'), 400);
     });
   }
 
   bindEvents() {
-    this.button.addEventListener('click', () => this.addTask());
+    this.button.addEventListener('click', () => this.add());
     this.input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') this.addTask();
+      if (e.key === 'Enter') this.add();
     });
   }
 
-  addTask() {
+  add() {
     const value = this.input.value.trim();
     if (!value) return;
 
     const task = new Task({ text: value });
-
     this.tasks.push(task);
-    StorageService.save(this.tasks);
 
-    this.renderer.render(task);
+    StorageService.save(this.tasks);
+    this.render();
 
     this.input.value = '';
-    this.updateEmptyMsg();
+    this.updateEmpty();
   }
 
-  toggleTask(task, li, checkbox, timestampEl) {
+  toggle(task) {
     task.toggle();
-
-    checkbox.checked = task.done;
-    timestampEl.textContent = task.timestamp;
-    li.classList.toggle('done', task.done);
-
     StorageService.save(this.tasks);
+    this.render();
   }
 
-  deleteTask(task, li) {
-    li.classList.add('removing');
-
-    setTimeout(() => {
-      this.tasks = this.tasks.filter(t => t.id !== task.id);
-      StorageService.save(this.tasks);
-      li.remove();
-      this.updateEmptyMsg();
-    }, 300);
+  remove(task) {
+    this.tasks = this.tasks.filter(t => t.id !== task.id);
+    StorageService.save(this.tasks);
+    this.render();
   }
 
-  renderAll() {
-    this.renderer.clear();
-    this.tasks.forEach(task => this.renderer.render(task));
+  render() {
+    this.list.innerHTML = '';
+
+    this.tasks.forEach(task => {
+      const li = document.createElement('li');
+      li.className = 'task';
+
+      if (task.done) li.classList.add('task--done');
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = task.done;
+
+      checkbox.addEventListener('change', () => this.toggle(task));
+
+      const content = document.createElement('div');
+      content.className = 'task__content';
+
+      const text = document.createElement('div');
+      text.className = 'task__text';
+      text.textContent = task.text;
+
+      const ts = document.createElement('div');
+      ts.className = 'task__timestamp';
+      ts.textContent = task.timestamp;
+
+      const del = document.createElement('button');
+      del.className = 'task__delete';
+      del.textContent = 'Usuń';
+      del.addEventListener('click', () => this.remove(task));
+
+      content.appendChild(text);
+      content.appendChild(ts);
+
+      li.appendChild(checkbox);
+      li.appendChild(content);
+      li.appendChild(del);
+
+      this.list.appendChild(li);
+    });
+
+    this.updateEmpty();
   }
 
-  updateEmptyMsg() {
+  updateEmpty() {
     this.emptyMsg.style.display =
       this.tasks.length === 0 ? 'block' : 'none';
   }
 }
 
-// --- START ---
 new TaskApp();

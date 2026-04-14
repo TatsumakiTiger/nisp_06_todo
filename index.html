@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html lang="pl" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moja lista zadań</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <div class="header-top">
-        <h1>Lista zadań</h1>
-        <button id="theme-toggle" aria-label="Zmień motyw">
-          <span class="icon sun">☀️</span>
-          <span class="icon moon">🌙</span>
-        </button>
-      </div>
-      <p class="subtitle">Ogarnij dzień. Jeden punkt na raz.</p>
+  <div class="app">
+    <header class="app__header">
+      <h1 class="app__title">Lista zadań</h1>
+
+      <button id="theme-toggle" class="app__theme-toggle" aria-label="Zmień motyw">
+        <span class="icon sun">☀️</span>
+        <span class="icon moon">🌙</span>
+      </button>
     </header>
 
+    <p class="app__subtitle">Ogarnij dzień. Jeden punkt na raz.</p>
+
     <div class="form">
-      <input type="text" id="task-input" placeholder="Co trzeba zrobić?">
-      <button id="add-btn">Dodaj</button>
+      <input id="task-input" class="form__input" type="text" placeholder="Co trzeba zrobić?" />
+      <button id="add-btn" class="form__button">Dodaj</button>
     </div>
 
-    <ul id="task-list"></ul>
+    <ul id="task-list" class="task-list"></ul>
 
-    <p id="empty-msg">Brak zadań — zacznij od czegoś małego.</p>
+    <p id="empty-msg" class="app__empty">
+      Brak zadań — zacznij od czegoś małego.
+    </p>
   </div>
 
   <script src="app.js"></script>
