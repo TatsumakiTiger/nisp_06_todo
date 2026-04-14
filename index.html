@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,14 @@
 
   <div class="container">
     <header>
-      <h1>📋 Moja lista zadań</h1>
-      <p class="subtitle">Ogarnij życie. Jeden punkt na raz.</p>
+      <div class="header-top">
+        <h1>Lista zadań</h1>
+        <button id="theme-toggle" aria-label="Zmień motyw">
+          <span class="icon sun">☀️</span>
+          <span class="icon moon">🌙</span>
+        </button>
+      </div>
+      <p class="subtitle">Ogarnij dzień. Jeden punkt na raz.</p>
     </header>
 
     <div class="form">
